@@ -1,4 +1,6 @@
 import os
+from openai import OpenAI
+client = OpenAI()
 
 from flask import Flask, render_template, request
 app = Flask(__name__)
@@ -24,70 +26,74 @@ def job_description():
         return render_template("ai_suggestions.html", response=ai_response, resume=resume, job=job)
     return render_template("job_description.html")
 
-@app.route("/cover_letter", methods=["GET", "POST"])
+@app.route("/cover_letter", methods=["POST"])
 def cover_letter():
-    if request.method == "POST":
-        resume = request.form.get("resume", "").lower()
-        job = request.form.get("job", "").lower()
-        user_name = request.form.get("name", "Your Name")
-        job_title = request.form.get("job_title", "the advertised role")
+    resume = request.form.get("resume", "")
+    job = request.form.get("job", "")
+    user_name = request.form.get("name", "Your Name")
+    job_title = request.form.get("job_title", "the advertised position")
 
-        # Basic keyword matching
-        job_keywords = set(job.replace(",", "").replace(".", "").split())
-        resume_words = set(resume.replace(",", "").replace(".", "").split())
+    prompt = f"""
+Using the resume and job description below, write a personalized cover letter for a position titled '{job_title}'.
 
-        common_keywords = job_keywords & resume_words
-        top_keywords = sorted(common_keywords)[:5]
+Resume:
+{resume}
 
-        # Build letter using a simple template
-        generated_letter = f"""
-Dear Hiring Manager,
+Job Description:
+{job}
 
-I am writing to express my interest in the {job_title}. With a background in {', '.join(top_keywords)}, I believe I could bring valuable skills to your team and contribute meaningfully to your goals.
-
-Throughout my career, I have demonstrated the ability to learn quickly, adapt to new challenges, and collaborate effectively — all of which align with your job requirements. I would welcome the opportunity to apply my experience in a dynamic and rewarding environment.
-
-Thank you for considering my application.
-
-Sincerely,  
-{user_name}
+Please make the tone professional and enthusiastic. Sign it off with: {user_name}
 """
 
-        return render_template("cover_letter.html", letter=generated_letter, name=user_name)
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=600,
+            temperature=0.7
+        )
 
-    return render_template("cover_letter.html", letter="You must generate a cover letter via the AI Suggestions page.", name="")
+        generated_letter = response.choices[0].message.content.strip()
 
+    except Exception as e:
+        generated_letter = f"OpenAI API Error: {str(e)}"
+
+    return render_template("cover_letter.html", letter=generated_letter)
 
 @app.route("/ai_suggestions", methods=["GET", "POST"])
 def ai_suggestions():
     if request.method == "POST":
-        resume = request.form.get("resume", "").lower()
-        job = request.form.get("job", "").lower()
+        resume = request.form.get("resume", "")
+        job = request.form.get("job", "")
 
-        # Simple keyword extraction: split by common separators
-        job_keywords = set(job.replace(",", "").replace(".", "").split())
-        resume_words = set(resume.replace(",", "").replace(".", "").split())
+        prompt = f"""
+You are an expert career coach. Compare the following resume with the job description and provide personalized, actionable suggestions to improve the resume for this role.
 
-        # Find which job keywords are missing from the resume
-        missing_keywords = job_keywords - resume_words
-        common_keywords = job_keywords & resume_words
+Resume:
+{resume}
 
-        if missing_keywords:
-            ai_response = f"""
-Your resume is missing some keywords that are important in the job description:
-<br><strong>{', '.join(sorted(missing_keywords))}</strong>
+Job Description:
+{job}
 
-You already include:
-<br><em>{', '.join(sorted(common_keywords))}</em>
-
-Tip: Consider updating your resume to include some of the missing terms, if relevant.
+Suggestions:
 """
-        else:
-            ai_response = "Your resume already includes all the major keywords from the job description. Nice work!"
+
+        try:
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=500,
+                temperature=0.7
+            )
+
+            ai_response = response.choices[0].message.content.strip()
+
+        except Exception as e:
+            ai_response = f"⚠️ OpenAI API Error: {str(e)}"
 
         return render_template("ai_suggestions.html", response=ai_response, resume=resume, job=job)
 
-    return render_template("ai_suggestions.html", response="You must upload a resume and job description first.", resume="", job="")
+    return render_template("ai_suggestions.html", response="⚠️ Please start from the Upload Resume page.", resume="", job="")
 
 
 if __name__ =="__main__":
