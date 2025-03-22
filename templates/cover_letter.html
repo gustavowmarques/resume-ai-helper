@@ -1,11 +1,23 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title></title>
-        <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
-    </head>
-    <body>
-        <h1>Resume & Cover Letter Helper</h1>
-        <script src="{{ url_for('static', filename='js/script.js')}}"></script>
-    </body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<h2>Your AI-Generated Cover Letter</h2>
+<pre id="letter-content" style="white-space: pre-wrap;">{{ letter }}</pre>
+
+<div class="mt-4">
+    <a href="/" class="btn btn-secondary">Back to Home</a>
+    <button class="btn btn-success" onclick="downloadLetter()">Download as .txt</button>
+</div>
+
+<script>
+function downloadLetter() {
+    const letterText = document.getElementById('letter-content').innerText;
+    const blob = new Blob([letterText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'cover_letter.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+</script>
+{% endblock %}

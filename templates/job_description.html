@@ -1,11 +1,12 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title></title>
-        <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
-    </head>
-    <body>
-        <h1>Resume & Cover Letter Helper</h1>
-        <script src="{{ url_for('static', filename='js/script.js')}}"></script>
-    </body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<h2>Paste the Job Description</h2>
+<form method="POST" action="/ai_suggestions">
+    <input type="hidden" name="resume" value="{{ resume }}">
+    <div class="mb-3">
+        <label for="job">Paste Job Description</label>
+        <textarea class="form-control" name="job" rows="10" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-success">Generate Suggestions</button>
+</form>
+{% endblock %}

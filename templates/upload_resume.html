@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title></title>
-        <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
-    </head>
-    <body>
-        <h1>Resume & Cover Letter Helper</h1>
-        <script src="{{ url_for('static', filename='js/script.js')}}"></script>
-    </body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<h2>Upload or Paste Your Resume</h2>
+<form method="POST">
+    <div class="mb-3">
+        <textarea class="form-control" name="resume" rows="10" placeholder="Paste your resume here..."></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Next</button>
+</form>
+{% endblock %}

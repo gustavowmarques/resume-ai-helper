@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title></title>
-        <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
-    </head>
-    <body>
-        <h1>Resume & Cover Letter Helper</h1>
-        <script src="{{ url_for('static', filename='js/script.js')}}"></script>
-    </body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<h1>Welcome to Resume AI Helper</h1>
+<p>This app helps you improve your resume and generate tailored cover letters using AI.</p>
+{% endblock %}

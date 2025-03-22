@@ -1,8 +1,6 @@
 body {
-    font-family: Arial, sans-serif;
-    padding: 2rem;
-    background-color: #f9f9f9;
+    background-color: #f8f9fa;
 }
-h1 {
-    color: #333;
+h1, h2 {
+    color: #343a40;
 }

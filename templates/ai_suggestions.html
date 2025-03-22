@@ -1,11 +1,26 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title></title>
-        <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
-    </head>
-    <body>
-        <h1>Resume & Cover Letter Helper</h1>
-        <script src="{{ url_for('static', filename='js/script.js')}}"></script>
-    </body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<h2>AI Suggestions</h2>
+<div class="alert alert-light" style="white-space: pre-wrap;">
+    {{ response | safe }}
+</div>
+
+
+<form method="POST" action="/cover_letter">
+    <input type="hidden" name="resume" value="{{ resume }}">
+    <input type="hidden" name="job" value="{{ job }}">
+
+    <div class="mb-3">
+        <label for="name">Your Name</label>
+        <input class="form-control" type="text" name="name" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="job_title">Job Title</label>
+        <input class="form-control" type="text" name="job_title" required>
+    </div>
+
+    <button class="btn btn-info mt-3">Generate Cover Letter</button>
+</form>
+
+{% endblock %}
