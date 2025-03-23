@@ -7,7 +7,12 @@
     <a href="/" class="btn btn-secondary">Back to Home</a>
     <button class="btn btn-success" onclick="downloadTxt()">Download as .txt</button>
     <button class="btn btn-outline-primary" onclick="downloadPdf()">Download as .pdf</button>
-    <button class="btn btn-outline-dark" onclick="downloadDocx()">Download as .docx</button>
+    
+    {% if letter %}
+        <a href="/download_docx" class="btn btn-outline-dark">Download as .docx</a>
+    {% else %}
+        <p class="text-danger mt-3">Generate a cover letter before downloading it.</p>
+    {% endif %}
 </div>
 
 <script>

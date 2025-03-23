@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, send_file
 from dotenv import load_dotenv
+from flask_session import Session 
 import os 
 from openai import OpenAI
 
 load_dotenv()
+
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 import requests
@@ -12,9 +14,14 @@ import docx
 import pdfplumber
 from werkzeug.utils import secure_filename
 
+from docx import Document
+import io
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
+
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 @app.route("/")
 def home():
@@ -84,31 +91,29 @@ def test_form():
 @app.route("/job_description", methods=["GET", "POST"])
 def job_description():
     resume = session.get("resume", "") 
-    
-    
 
     if request.method == "POST":
         job_desc = request.form.get("job", "")
         job_url = request.form.get("job_url", "")
-        
+
+        if not job_desc and not job_url:
+            return render_template("job_description.html", resume=resume, error="Please paste a job description or enter a job URL.")
+
         if job_url:
             try:
                 response = requests.get(job_url, timeout=5)
                 soup = BeautifulSoup(response.text, "html.parser")
                 paragraphs = soup.find_all(["p", "li"])
-                job_desc = "\n".join(p.get_text() for p in paragraphs)
+                job_desc = "\n".join(p.get_text() for p in paragraphs).strip()
+
+                if not job_desc:
+                    return render_template("job_description.html", resume=resume, error="Unable to extract job description from this URL. Try copying and pasting it instead.")
+                
             except Exception as e:
-                job_desc = f"Could not fetch job description from URL: {str(e)}"
+                return render_template("job_description.html", resume=resume, error=f"Error fetching job description: {str(e)}")
 
-        if not job_desc.strip():
-            return render_template("job_description.html", resume=resume, error="Please paste a job description or URL.")
-        print("🧠 job_desc length:", len(job_desc))
-        print("📥 session['resume']:", len(resume))
-
-        # Save to session
         session["job"] = job_desc
         return redirect(url_for("ai_suggestions"))
-
 
     return render_template("job_description.html", resume=resume)
 
@@ -142,9 +147,16 @@ Please make the tone professional and enthusiastic. Sign it off with: {user_name
         )
 
         generated_letter = response.choices[0].message.content.strip()
+        
 
     except Exception as e:
         generated_letter = f"OpenAI API Error: {str(e)}"
+        
+    session["cover_letter"] = generated_letter
+
+    print("✅ Generated cover letter:", generated_letter[:100])
+    print("✅ Stored in session:", len(session.get("cover_letter", "")))
+
 
     return render_template("cover_letter.html", letter=generated_letter)
 
@@ -182,11 +194,31 @@ Suggestions:
         ai_response = response.choices[0].message.content.strip()
 
     except Exception as e:
-        ai_response = f"⚠️ OpenAI API Error: {str(e)}"
+        ai_response = f" OpenAI API Error: {str(e)}"
 
     return render_template("ai_suggestions.html", response=ai_response, resume=resume, job=job)
 
+@app.route("/download_docx")
+def download_docx():
+    letter = session.get("cover_letter", "")
 
+    if not letter:
+        return "No cover letter to download."
+
+    doc = Document()
+    for line in letter.split('\n'):
+        doc.add_paragraph(line)
+
+    file_stream = io.BytesIO()
+    doc.save(file_stream)
+    file_stream.seek(0)
+
+    return send_file(
+        file_stream,
+        as_attachment=True,
+        download_name="cover_letter.docx",
+        mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )
 
 if __name__ =="__main__":
     app.run(debug=True)
