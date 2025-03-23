@@ -154,8 +154,8 @@ Please make the tone professional and enthusiastic. Sign it off with: {user_name
         
     session["cover_letter"] = generated_letter
 
-    print("✅ Generated cover letter:", generated_letter[:100])
-    print("✅ Stored in session:", len(session.get("cover_letter", "")))
+    print("Generated cover letter:", generated_letter[:100])
+    print("Stored in session:", len(session.get("cover_letter", "")))
 
 
     return render_template("cover_letter.html", letter=generated_letter)
