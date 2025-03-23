@@ -36,6 +36,23 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script>
+  window.jsPDF = window.jspdf.jsPDF;
+</script>
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+   <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const forms = document.querySelectorAll("form");
+      forms.forEach(form => {
+        form.addEventListener("submit", () => {
+          const loading = document.getElementById("loading");
+          if (loading) {
+            loading.style.display = "block";
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>

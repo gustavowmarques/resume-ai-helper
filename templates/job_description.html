@@ -1,12 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>Paste the Job Description</h2>
-<form method="POST" action="/ai_suggestions">
-    <input type="hidden" name="resume" value="{{ resume }}">
+<form method="POST">
+    <div class="mb-3">
+        <label for="job_url">Paste Job Description URL</label>
+        <input type="url" class="form-control" id="job_url" name="job_url" autocomplete="url" placeholder="https://example.com/job-listing">
+    </div>
+
+    <p class="text-center my-2">— or —</p>
+
     <div class="mb-3">
         <label for="job">Paste Job Description</label>
-        <textarea class="form-control" name="job" rows="10" required></textarea>
+        <textarea class="form-control" id="job" name="job" rows="10" placeholder="Paste the job description here..."></textarea>
     </div>
+
+    <input type="hidden" name="resume" id="resume" value="{{ resume }}">
     <button type="submit" class="btn btn-success">Generate Suggestions</button>
 </form>
+
 {% endblock %}

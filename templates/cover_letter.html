@@ -5,17 +5,42 @@
 
 <div class="mt-4">
     <a href="/" class="btn btn-secondary">Back to Home</a>
-    <button class="btn btn-success" onclick="downloadLetter()">Download as .txt</button>
+    <button class="btn btn-success" onclick="downloadTxt()">Download as .txt</button>
+    <button class="btn btn-outline-primary" onclick="downloadPdf()">Download as .pdf</button>
+    <button class="btn btn-outline-dark" onclick="downloadDocx()">Download as .docx</button>
 </div>
 
 <script>
-function downloadLetter() {
-    const letterText = document.getElementById('letter-content').innerText;
-    const blob = new Blob([letterText], { type: 'text/plain' });
+function downloadTxt() {
+    const text = document.getElementById("letter-content").innerText;
+    const blob = new Blob([text], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'cover_letter.txt';
+    a.download = "cover_letter.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function downloadPdf() {
+    const text = document.getElementById("letter-content").innerText;
+    const doc = new jsPDF(); 
+    doc.setFont("Helvetica");
+    doc.setFontSize(12);
+    const lines = doc.splitTextToSize(text, 180);
+    doc.text(lines, 15, 20);
+    doc.save("cover_letter.pdf");
+}
+
+function downloadDocx() {
+    const text = document.getElementById("letter-content").innerText;
+    const blob = new Blob([text], {
+        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "cover_letter.docx";
     a.click();
     URL.revokeObjectURL(url);
 }
