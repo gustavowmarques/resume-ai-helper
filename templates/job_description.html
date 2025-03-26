@@ -1,6 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
+
 <h2>Paste the Job Description</h2>
+
+{% if resume %}
+  <div class="mb-4">
+    <h5 class="text-muted">Resume Preview:</h5>
+    <pre style="max-height: 200px; overflow-y: auto; background-color: #f8f9fa; padding: 1rem; border: 1px solid #ddd;">
+{{ resume[:1500] }}
+    </pre>
+  </div>
+{% endif %}
+
 <form method="POST">
     <div class="mb-3">
         <label for="job_url">Paste Job Description URL</label>

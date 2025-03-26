@@ -29,20 +29,20 @@ def home():
 
 @app.route("/upload_resume", methods=["GET", "POST"])
 def upload_resume():
-    print("📥 /upload_resume triggered")
+    print(" /upload_resume triggered")
 
     if request.method == "POST":
-        print("✅ POST method received on /upload_resume")
+        print("POST method received on /upload_resume")
 
         resume_text = request.form.get("resume", "").strip()
-        print(f"📝 Pasted resume length: {len(resume_text)} characters")
+        print(f"Pasted resume length: {len(resume_text)} characters")
 
         uploaded_file = request.files.get("resume_file")
 
         if uploaded_file and uploaded_file.filename != "":
             filename = secure_filename(uploaded_file.filename)
             file_ext = os.path.splitext(filename)[1].lower()
-            print(f"📄 Uploaded file: {filename}")
+            print(f"Uploaded file: {filename}")
 
             try:
                 if file_ext == ".txt":
@@ -58,16 +58,16 @@ def upload_resume():
                 else:
                     return render_template("upload_resume.html", error="Unsupported file format.")
 
-                print(f"📄 Extracted resume from file: {len(resume_text)} characters")
+                print(f"Extracted resume from file: {len(resume_text)} characters")
 
             except Exception as e:
-                print(f"❌ Error reading file: {e}")
+                print(f"Error reading file: {e}")
                 return render_template("upload_resume.html", error="There was an error processing the uploaded file.")
 
         if not resume_text:
             return render_template("upload_resume.html", error="Please upload a resume file or paste the text.")
 
-        # ✅ These must be inside the POST block
+        # These must be inside the POST block
         session["resume"] = resume_text
         return redirect(url_for("job_description"))
 
