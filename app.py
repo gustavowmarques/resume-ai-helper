@@ -230,9 +230,13 @@ def feedback():
         print("Feedback received:", feedback_text)
         print("Optional email:", email)
 
-        # Optional: store in file or DB
-        # with open("feedback.txt", "a") as f:
-        #     f.write(f"{email} - {feedback_text}\n")
+        # Save to file
+        with open("feedback.txt", "a", encoding="utf-8") as f:
+            f.write("----- Feedback Entry -----\n")
+            if email:
+                f.write(f"Email: {email}\n")
+            f.write(f"Feedback: {feedback_text}\n")
+            f.write("--------------------------\n\n")
 
         return render_template("feedback_thankyou.html")
 
