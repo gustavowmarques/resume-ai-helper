@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Feedback</h2>
+<p>We'd love to hear what you think about Resume AI Helper.</p>
+
+<form method="POST">
+  <div class="mb-3">
+    <label for="feedback">Your Feedback</label>
+    <textarea name="feedback" id="feedback" class="form-control" rows="5" required></textarea>
+  </div>
+
+  <div class="mb-3">
+    <label for="email">Your Email (optional)</label>
+    <input type="email" name="email" id="email" class="form-control">
+  </div>
+
+  <button type="submit" class="btn btn-success">Submit Feedback</button>
+</form>
+{% endblock %}

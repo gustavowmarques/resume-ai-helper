@@ -221,5 +221,23 @@ def download_docx():
         mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     )
 
+@app.route("/feedback", methods=["GET", "POST"])
+def feedback():
+    if request.method == "POST":
+        feedback_text = request.form.get("feedback", "").strip()
+        email = request.form.get("email", "").strip()
+
+        print("Feedback received:", feedback_text)
+        print("Optional email:", email)
+
+        # Optional: store in file or DB
+        # with open("feedback.txt", "a") as f:
+        #     f.write(f"{email} - {feedback_text}\n")
+
+        return render_template("feedback_thankyou.html")
+
+    return render_template("feedback.html")
+
+
 if __name__ =="__main__":
     app.run(debug=True)
