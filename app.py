@@ -125,6 +125,7 @@ def cover_letter():
     job = request.form.get("job", "")
     user_name = request.form.get("name", "Your Name")
     job_title = request.form.get("job_title", "the advertised position")
+    tone = request.form.get("tone", "formal")
 
     prompt = f"""
 Using the resume and job description below, write a personalized cover letter for a position titled '{job_title}'.
@@ -135,7 +136,7 @@ Resume:
 Job Description:
 {job}
 
-Please make the tone professional and enthusiastic. Sign it off with: {user_name}
+Use a {tone} tone in your writing. Sign it off with: {user_name}
 """
 
     try:
