@@ -24,8 +24,9 @@
         <label for="job">Paste Job Description</label>
         <textarea class="form-control" id="job" name="job" rows="10" placeholder="Paste the job description here..."></textarea>
     </div>
-
+    {% include "partials/_loading.html" %}
     <input type="hidden" name="resume" id="resume" value="{{ resume }}">
+
     <button type="submit" class="btn btn-success">Generate Suggestions</button>
 </form>
 

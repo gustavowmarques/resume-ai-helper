@@ -29,16 +29,11 @@
         <option value="friendly">Friendly</option>
         </select>
     </div>
+    {% include "partials/_loading.html" %}
 
-    <button class="btn btn-info mt-3">Generate Cover Letter</button>
+    <button type="submit" class="btn btn-info mt-3">Generate Cover Letter</button>
 </form>
 
-<div id="loading" class="text-center my-4" style="display: none;">
-    <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Generating AI response...</span>
-    </div>
-    <p class="mt-2">AI is thinking... Please wait.</p>
-</div>
 
 
 {% endblock %}
