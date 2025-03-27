@@ -17,6 +17,10 @@ from werkzeug.utils import secure_filename
 from docx import Document
 import io
 
+import smtplib
+from email.message import EmailMessage
+
+
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
 
@@ -238,9 +242,33 @@ def feedback():
             f.write(f"Feedback: {feedback_text}\n")
             f.write("--------------------------\n\n")
 
+        # SEND EMAIL HERE — INSIDE POST BLOCK
+        gmail_user = os.getenv("MAIL_USERNAME")
+        gmail_password = os.getenv("MAIL_PASSWORD")
+
+        msg = EmailMessage()
+        msg["Subject"] = "New Feedback from Resume AI Helper"
+        msg["From"] = gmail_user
+        msg["To"] = gmail_user  # You can change this to any destination
+
+        body = f"Feedback:\n{feedback_text}\n\nEmail: {email or 'Not provided'}"
+        msg.set_content(body)
+
+        try:
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+                smtp.login(gmail_user, gmail_password)
+                smtp.send_message(msg)
+                print("Feedback email sent.")
+        except Exception as e:
+            print(f"Failed to send feedback email: {e}")
+
         return render_template("feedback_thankyou.html")
 
     return render_template("feedback.html")
+
+# Email config
+
+
 
 
 if __name__ =="__main__":
