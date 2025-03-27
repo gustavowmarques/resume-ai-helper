@@ -13,30 +13,25 @@
   {% include "partials/_navbar.html" %}
   {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
-    <div class="container mt-3">
-  {% for category, message in messages %}
+  <div class="container mt-3">
+    {% for category, message in messages %}
     <div class="alert alert-{{ category }}" role="alert">
-  {{ message }}
+      {{ message }}
     </div>
   {% endfor %}
-    </div>
+  </div>
   {% endif %}
   {% endwith %}
 
-
-<div class="container">
-  <main class="container">
+  <main class="container mt-4">
     {% block content %}{% endblock %}
   </main>
-  </div>
-
+  {% include "partials/_footer.html" %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
   window.jsPDF = window.jspdf.jsPDF;
 </script>
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-{% include "partials/_footer.html" %}
-
 </body>
 </html>
