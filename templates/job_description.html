@@ -15,14 +15,14 @@
 <form method="POST">
     <div class="mb-3">
         <label for="job_url">Paste Job Description URL</label>
-        <input type="url" name="job_url" id="job_url" class="form-control" value="{{ job_url }}">
+        <input type="url" name="job_url" id="job_url" class="form-control" value="{{ job_url or '' }}">
     </div>
 
     <p class="text-center my-2">— or —</p>
 
     <div class="mb-3">
         <label for="job">Paste Job Description</label>
-        <textarea class="form-control" id="job" name="job" rows="10">{{ job }}</textarea>
+        <textarea class="form-control" id="job" name="job" rows="10">{{ job or '' }}</textarea>
     </div>
     <input type="hidden" name="resume" id="resume" value="{{ resume }}">
     {% include "partials/_loading.html" %}
