@@ -20,6 +20,7 @@ import io
 import smtplib
 from email.message import EmailMessage
 
+import zipfile
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
@@ -166,7 +167,16 @@ Use a {tone} tone in your writing. Sign it off with: {user_name}
     print("Stored in session:", len(session.get("cover_letter", "")))
 
 
-    return render_template("cover_letter.html", letter=generated_letter)
+    return render_template(
+        "cover_letter.html",
+        letter=generated_letter,
+        resume=resume,
+        job=job,
+        tone=tone,
+        name=user_name,
+        job_title=job_title,
+        response=session.get("ai_suggestions", "")
+        )
 
 @app.route("/ai_suggestions", methods=["GET"])
 def ai_suggestions():
@@ -215,6 +225,8 @@ Suggestions:
         )
 
         ai_response = response.choices[0].message.content.strip()
+        session["ai_suggestions"] = ai_response
+
 
     except Exception as e:
         ai_response = f" OpenAI API Error: {str(e)}"
@@ -299,6 +311,30 @@ def page_not_found(e):
 def internal_server_error(e):
     return render_template("500.html"), 500
 
+@app.route("/download_zip")
+def download_zip():
+    # Get content from session
+    suggestions = session.get("ai_suggestions", "")
+    cover_letter = session.get("cover_letter", "")
+
+    if not suggestions and not cover_letter:
+        return "No content to zip", 400
+
+    # Create in-memory ZIP file
+    memory_file = io.BytesIO()
+    with zipfile.ZipFile(memory_file, "w") as zf:
+        if suggestions:
+            zf.writestr("ai_suggestions.txt", suggestions)
+        if cover_letter:
+            zf.writestr("cover_letter.txt", cover_letter)
+
+    memory_file.seek(0)
+
+    return send_file(
+        memory_file,
+        download_name="resume_ai_helper.zip",
+        as_attachment=True
+    )
 
 if __name__ =="__main__":
     app.run(debug=True)
