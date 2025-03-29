@@ -131,12 +131,14 @@ def job_description():
 def cover_letter():
     resume = request.form.get("resume", "")
     job = request.form.get("job", "")
+
     user_name = request.form.get("name", "Your Name")
     job_title = request.form.get("job_title", "the advertised position")
     tone = request.form.get("tone", "formal")
+    language = request.form.get("language", "English")
 
     prompt = f"""
-Using the resume and job description below, write a personalized cover letter for a position titled '{job_title}'.
+Using the resume and job description below, write a personalized cover letter for a position titled '{job_title}' in {language}.
 
 Resume:
 {resume}
@@ -237,7 +239,7 @@ Suggestions:
         resume=resume,
         job=job,
         name_guess=name_guess,
-        job_title_guess=job_title_guess
+        job_title_guess=job_title_guess,
         )
 
 @app.route("/download_docx")
