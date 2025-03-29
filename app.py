@@ -338,5 +338,10 @@ def download_zip():
         as_attachment=True
     )
 
+@app.route("/start_over")
+def start_over():
+    session.clear()
+    return redirect(url_for("home"))
+
 if __name__ =="__main__":
     app.run(debug=True)
