@@ -8,5 +8,45 @@ h1, h2 {
     text-align: center;
     padding: 1rem;
   }
+  body.dark-mode {
+    background-color: #121212 !important;
+    color: #f8f9fa !important;
+  }
+  
+  .dark-mode .form-control {
+    background-color: #1e1e1e;
+    color: #f8f9fa;
+    border-color: #6c757d;
+  }
+  
+  .dark-mode .form-control::placeholder {
+    color: #adb5bd;
+  }
+  
+  .dark-mode .btn,
+  .dark-mode .btn-outline-dark,
+  .dark-mode .btn-outline-primary {
+    background-color: #343a40;
+    color: #ffffff;
+    border-color: #6c757d;
+  }
+  
+  .dark-mode .btn:hover {
+    background-color: #495057;
+    color: #fff;
+  }
+  
+  .dark-mode .navbar,
+  .dark-mode .card,
+  .dark-mode .container,
+  .dark-mode .alert {
+    background-color: #1f1f1f;
+    color: #f8f9fa;
+  }
+  
+  .dark-mode .form-check-label {
+    color: #f8f9fa;
+  }
+  
   
   
