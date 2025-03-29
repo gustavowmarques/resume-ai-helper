@@ -274,10 +274,6 @@ def page_not_found(e):
 def internal_server_error(e):
     return render_template("500.html"), 500
 
-@app.route("/trigger500")
-def trigger_error():
-    raise Exception("Deliberate error!")
-
 
 if __name__ =="__main__":
     app.run(debug=True)
