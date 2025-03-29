@@ -16,7 +16,7 @@
 
     <div class="mb-3">
         <label for="resume">Paste Resume Text</label>
-        <textarea class="form-control" name="resume" id="resume" rows="10" placeholder="Paste your resume here..."></textarea>
+        <textarea class="form-control" name="resume" id="resume" rows="10" placeholder="Paste your resume here...">{{ session.get("resume", "") }}</textarea>
     </div>
     {% include "partials/_loading.html" %}
     <button type="submit" id="generate" class="btn btn-primary">Next</button>

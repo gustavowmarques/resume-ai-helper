@@ -71,7 +71,7 @@ def upload_resume():
         if not resume_text:
             return render_template("upload_resume.html", error="Please upload a resume file or paste the text.")
 
-        # These must be inside the POST block
+        
         session["resume"] = resume_text
         return redirect(url_for("job_description"))
 
@@ -117,10 +117,13 @@ def job_description():
                 return render_template("job_description.html", resume=resume, error=f"Error fetching job description: {str(e)}")
 
         session["job"] = job_desc
+        session["job_url"] = job_url
+
         return redirect(url_for("ai_suggestions"))
 
-    return render_template("job_description.html", resume=resume)
-
+    return render_template("job_description.html", resume=resume,
+                       job=session.get("job", ""),
+                       job_url=session.get("job_url", ""))
 
 
 @app.route("/cover_letter", methods=["POST"])
@@ -168,10 +171,25 @@ Use a {tone} tone in your writing. Sign it off with: {user_name}
 @app.route("/ai_suggestions", methods=["GET"])
 def ai_suggestions():
     resume = session.get("resume", "")
+    lines = resume.splitlines()
+    name_guess = lines[0].strip() if lines else ""
+
     job = session.get("job", "")
+    job_title_guess = ""
+
+    if job:
+        job_title_guess = job.splitlines()[0].strip()
+    elif "job_url" in session:
+        job_url = session["job_url"]
+        job_title_guess = job_url.split("/")[-1].replace("-", " ").replace("_", " ").split("?")[0].title()
 
     if not resume or not job:
-        return render_template("ai_suggestions.html", response="⚠️ Missing resume or job description.", resume="", job="")
+        return render_template(
+            "ai_suggestions.html",
+            response="Missing resume or job description.",
+            resume="",
+            job="",
+            name_guess=name_guess)
 
     resume = resume[:3000]
     job = job[:2000]
@@ -201,7 +219,14 @@ Suggestions:
     except Exception as e:
         ai_response = f" OpenAI API Error: {str(e)}"
 
-    return render_template("ai_suggestions.html", response=ai_response, resume=resume, job=job)
+    return render_template(
+        "ai_suggestions.html",
+        response=ai_response, 
+        resume=resume,
+        job=job,
+        name_guess=name_guess,
+        job_title_guess=job_title_guess
+        )
 
 @app.route("/download_docx")
 def download_docx():
