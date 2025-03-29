@@ -18,14 +18,8 @@
         <label for="resume">Paste Resume Text</label>
         <textarea class="form-control" name="resume" id="resume" rows="10" placeholder="Paste your resume here..."></textarea>
     </div>
-
+    {% include "partials/_loading.html" %}
     <button type="submit" id="generate" class="btn btn-primary">Next</button>
 </form>
-<div id="loading" class="text-center my-4" style="display: none;">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-    <p class="mt-2">Processing resume... Please wait.</p>
-</div>
 {% endblock %}
 
