@@ -9,8 +9,8 @@
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <li class="nav-item"><a class="nav-link {% if request.path == '/upload_resume' %}active{% endif %}" href="/upload_resume">Upload Resume</a></li>
           <li class="nav-item"><a class="nav-link {% if request.path == '/job_description' %}active{% endif %}" href="/job_description">Job Description</a></li>
-          <li class="nav-item"><a class="nav-link {% if request.path == '/feedback' %}active{% endif %}" href="/feedback">Feedback</a>
-          </li>
+          <li class="nav-item"><a class="nav-link {% if request.path == '/feedback' %}active{% endif %}" href="/feedback">Feedback</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('about') }}">About</a></li>
         </ul>
         <div class="d-flex">
           <a href="{{ url_for('start_over') }}" class="btn btn-outline-danger">
