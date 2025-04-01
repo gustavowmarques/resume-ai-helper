@@ -1,3 +1,23 @@
+"""
+Resume AI Helper App
+--------------------
+A Flask web application that helps users generate personalized cover letters based on their resumes and job descriptions using OpenAI's GPT model.
+
+Key Features:
+- Upload or paste a resume
+- Paste or scrape a job description from a URL
+- Generate AI-based improvement suggestions
+- Generate a customized cover letter
+- Option to download suggestions and letter as a ZIP
+- Feedback form with email integration
+- Dark mode toggle
+- Language selection for cover letter
+- Custom error pages (404 & 500)
+
+Author: Gustavo W. M. da Silva
+Date: March 2025
+"""
+
 from flask import Flask, render_template, request, session, redirect, url_for, send_file
 from dotenv import load_dotenv
 from flask_session import Session 
@@ -28,10 +48,13 @@ app.secret_key = "supersecretkey"
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+# Home Page
 @app.route("/")
 def home():
     return render_template("index.html")
 
+# Upload Resume Page
+# Allows user to paste or upload a resume file
 @app.route("/upload_resume", methods=["GET", "POST"])
 def upload_resume():
     print(" /upload_resume triggered")
@@ -79,20 +102,8 @@ def upload_resume():
     # Default GET request
     return render_template("upload_resume.html")
 
-
-@app.route("/test_form", methods=["GET", "POST"])
-def test_form():
-    if request.method == "POST":
-        print("✅ Test form POST received")
-        return "Success!"
-
-    return '''
-    <form method="POST">
-      <textarea name="resume"></textarea>
-      <button type="submit">Submit</button>
-    </form>
-    '''
-
+# Job Description Page
+# Accepts pasted job text or fetches from a job URL
 @app.route("/job_description", methods=["GET", "POST"])
 def job_description():
     resume = session.get("resume", "") 
@@ -126,7 +137,8 @@ def job_description():
                        job=session.get("job", ""),
                        job_url=session.get("job_url", ""))
 
-
+# Cover Letter Generation Page
+# Generates a cover letter based on resume and job
 @app.route("/cover_letter", methods=["POST"])
 def cover_letter():
     resume = request.form.get("resume", "")
@@ -180,6 +192,8 @@ Use a {tone} tone in your writing. Sign it off with: {user_name}
         response=session.get("ai_suggestions", "")
         )
 
+# AI Suggestions Page
+# Generates resume improvement suggestions via OpenAI
 @app.route("/ai_suggestions", methods=["GET"])
 def ai_suggestions():
     resume = session.get("resume", "")
@@ -242,6 +256,7 @@ Suggestions:
         job_title_guess=job_title_guess,
         )
 
+# Download Cover Letter as .docx File
 @app.route("/download_docx")
 def download_docx():
     letter = session.get("cover_letter", "")
@@ -264,6 +279,8 @@ def download_docx():
         mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     )
 
+# Feedback Form Page
+# Sends feedback email using Flask-Mail
 @app.route("/feedback", methods=["GET", "POST"])
 def feedback():
     if request.method == "POST":
@@ -305,6 +322,7 @@ def feedback():
 
     return render_template("feedback.html")
 
+# 404 & 500 Error Handlers
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template("404.html"), 404
@@ -313,6 +331,8 @@ def page_not_found(e):
 def internal_server_error(e):
     return render_template("500.html"), 500
 
+# Download ZIP Route
+# Serves the cover letter and suggestions as a ZIP
 @app.route("/download_zip")
 def download_zip():
     # Get content from session
@@ -338,11 +358,15 @@ def download_zip():
         as_attachment=True
     )
 
+# Start Over Route
+# Clears the session and redirects to the home page
 @app.route("/start_over")
 def start_over():
     session.clear()
     return redirect(url_for("home"))
 
+# About Page
+# Static informational page
 @app.route("/about")
 def about():
     return render_template("about.html")
