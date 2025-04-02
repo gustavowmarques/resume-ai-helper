@@ -1,11 +1,13 @@
 {% extends "base.html" %}
+{% block title %}Job Description{% endblock %}
+
 {% block content %}
 
 {% if resume %}
   <div class="mb-4">
     <h5 class="text-muted">Resume Preview:</h5>
-    <pre style="max-height: 200px; overflow-y: auto; background-color: #f8f9fa; padding: 1rem; border: 1px solid #ddd;">
-{{ resume[:1500] }}
+    <pre class="resume-preview">
+      {{ resume[:1500] | trim }}
     </pre>
   </div>
 {% endif %}
@@ -14,7 +16,7 @@
 
 <form method="POST">
     <div class="mb-3">
-        <label for="job_url">Paste Job Description URL</label>
+        <label for="job_url"class="form-label">Paste Job Description URL</label>
         <input type="url" name="job_url" id="job_url" class="form-control" value="{{ job_url or '' }}">
     </div>
 
@@ -24,7 +26,7 @@
         <label for="job">Paste Job Description</label>
         <textarea class="form-control" id="job" name="job" rows="10">{{ job or '' }}</textarea>
     </div>
-    <input type="hidden" name="resume" id="resume" value="{{ resume }}">
+
     {% include "partials/_loading.html" %}
     <button type="submit" class="btn btn-success">Generate Suggestions</button>
 </form>

@@ -48,5 +48,14 @@ h1, h2 {
     color: #f8f9fa;
   }
   
+  .resume-preview {
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    white-space: pre-wrap;
+  }
+  
   
   
