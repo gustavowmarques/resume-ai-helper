@@ -48,6 +48,11 @@ app.secret_key = "supersecretkey"
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+# Test for 500 error
+@app.route("/force500")
+def force500():
+    raise Exception("Test 500 error")
+
 # Home Page
 @app.route("/")
 def home():
