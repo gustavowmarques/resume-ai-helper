@@ -31,7 +31,7 @@ app.secret_key = "supersecretkey"
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return redirect(url_for("upload_resume"))
 
 
 @app.route("/upload_resume", methods=["GET", "POST"])
