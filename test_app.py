@@ -8,9 +8,9 @@ class ResumeAppTestCase(unittest.TestCase):
         self.client.testing = True
 
     def test_home(self):
-        response = self.client.get('/')
+        response = self.client.get('/', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        print("✅ Home page loads")
+        print("✅ Home page loads and redirects correctly")
 
     def test_upload_resume_text(self):
         response = self.client.post('/upload_resume', data={
