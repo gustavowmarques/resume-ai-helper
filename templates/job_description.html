@@ -14,6 +14,12 @@
 <br>
 <h2>Paste the Job Description</h2>
 
+{% if error %}
+  <div class="alert alert-danger" role="alert">
+    {{ error }}
+  </div>
+{% endif %}
+
 <form method="POST">
   <!-- Tabs -->
   <ul class="nav nav-tabs mb-3" id="jobTab" role="tablist">

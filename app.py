@@ -19,18 +19,25 @@ Date: March 2025
 """
 
 from flask import Flask, render_template, request, session, redirect, url_for, send_file
-from werkzeug.utils import secure_filename
+
 import io
 
-from utils import extract_contact_info
 from ai_logic import generate_ai_suggestions, generate_cover_letter
-from utils import extract_text_from_file, generate_docx_file, create_zip
+from utils import extract_text_from_file, generate_docx_file, create_zip, extract_job_description_from_url, extract_contact_info
+from flask_session import Session
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
+
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
+
 from flask_mail import Mail, Message
 import os
 from dotenv import load_dotenv
+
+import requests
+from bs4 import BeautifulSoup
 
 load_dotenv()
 
@@ -51,51 +58,82 @@ def home():
 @app.route("/upload_resume", methods=["GET", "POST"])
 def upload_resume():
     if request.method == "POST":
-        pasted_resume = request.form.get("resume", "")
+        resume_text = ""
+        pasted_text = request.form.get("resume", "").strip()
         uploaded_file = request.files.get("resume_file")
 
-        if pasted_resume:
-            session["resume"] = pasted_resume
-        elif uploaded_file:
-            filename = secure_filename(uploaded_file.filename)
-            file_text = extract_text_from_file(uploaded_file)
-            session["resume"] = file_text
-        else:
-            return render_template("upload_resume.html", error="Please upload a file or paste your resume.")
+        # ✅ Use pasted resume if provided
+        if pasted_text:
+            resume_text = pasted_text
+        elif uploaded_file and uploaded_file.filename != "":
+            try:
+                resume_text = extract_text_from_file(uploaded_file)
+            except Exception as e:
+                print(f"❌ Error reading file: {e}")
+                return render_template("upload_resume.html", error="There was an issue with the uploaded file.")
 
+        # ❌ If nothing is provided, show error
+        if not resume_text:
+            return render_template("upload_resume.html", error="Please paste your resume or upload a valid file.")
+
+        # ✅ Save to session
+        session["resume"] = resume_text
+        print("✅ Resume saved to session:", len(resume_text))
         return redirect(url_for("job_description"))
 
     return render_template("upload_resume.html", resume=session.get("resume", ""))
 
 
+
+
 @app.route("/job_description", methods=["GET", "POST"])
 def job_description():
     resume = session.get("resume", "")
+
     if request.method == "POST":
-        job_desc = request.form.get("job", "")
-        job_url = request.form.get("job_url", "")
+        job_desc = request.form.get("job", "").strip()
+        job_url = request.form.get("job_url", "").strip()
 
-        if not job_desc and not job_url:
-            return render_template("job_description.html", resume=resume, error="Please paste a job description or enter a job URL.")
+        print(f"Job URL: {job_url}")
+        print(f"Job Desc: {job_desc[:100]}")
 
-        if job_url:
-            import requests
-            from bs4 import BeautifulSoup
-            try:
-                response = requests.get(job_url, timeout=5)
-                soup = BeautifulSoup(response.text, "html.parser")
-                paragraphs = soup.find_all(["p", "li"])
-                job_desc = "\n".join(p.get_text() for p in paragraphs).strip()
+        # 🔍 If job URL is present and job description is blank, try scraping
+        if job_url and not job_desc:
+            job_desc = extract_job_description_from_url(job_url)
+
+            if job_desc is None or job_desc.startswith("Error:"):
+                return render_template(
+                    "job_description.html",
+                    resume=resume,
+                    error="We couldn’t extract the job description from this URL. Please paste it instead.",
+                    job_url=job_url,
+                    job=""
+                )
+
+
+                # ❗ If neither field has data
                 if not job_desc:
-                    return render_template("job_description.html", resume=resume, error="Unable to extract job description from this URL. Try copying and pasting it instead.")
-            except Exception as e:
-                return render_template("job_description.html", resume=resume, error=f"Error fetching job description: {str(e)}")
+                    return render_template(
+                        "job_description.html",
+                        resume=resume,
+                        error="Please provide a job description or a valid URL.",
+                        job_url=job_url,
+                        job=""
+                    )
 
+        # ✅ All good, save and continue
         session["job"] = job_desc
         session["job_url"] = job_url
+
         return redirect(url_for("ai_suggestions"))
 
-    return render_template("job_description.html", resume=resume, job=session.get("job", ""), job_url=session.get("job_url", ""))
+    # Initial GET request
+    return render_template(
+        "job_description.html",
+        resume=resume,
+        job=session.get("job", ""),
+        job_url=session.get("job_url", "")
+    )
 
 
 @app.route("/ai_suggestions", methods=["GET"])
@@ -103,8 +141,12 @@ def ai_suggestions():
     resume = session.get("resume", "")
     job = session.get("job", "")
 
+    print("🔍 DEBUG /ai_suggestions")
+    print("Resume Length:", len(resume))
+    print("Job Length:", len(job))
+
     if not resume or not job:
-        return render_template("ai_suggestions.html", response="⚠️ Missing resume or job description.", resume="", job="")
+        return render_template("ai_suggestions.html", response="Missing resume or job description.", resume="", job="")
 
     ai_response = generate_ai_suggestions(resume, job)
     return render_template("ai_suggestions.html", response=ai_response, resume=resume, job=job)
@@ -150,7 +192,19 @@ def download_all():
     if not resume or not job or not cover_letter:
         return "Missing data for zip."
 
-    return create_zip(resume, job, cover_letter)
+    files = {
+        "resume.txt": io.BytesIO(resume.encode("utf-8")),
+        "job_description.txt": io.BytesIO(job.encode("utf-8")),
+        "cover_letter.txt": io.BytesIO(cover_letter.encode("utf-8")),
+    }
+
+    return send_file(
+        create_zip(files),
+        as_attachment=True,
+        download_name="resume_ai_package.zip",
+        mimetype="application/zip"
+    )
+
 
 
 @app.route("/start_over")

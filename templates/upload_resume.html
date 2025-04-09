@@ -1,50 +1,46 @@
 {% extends "base.html" %}
 {% block title %}Upload Resume{% endblock %}
-
 {% block content %}
+
 <div class="container mt-4">
-    <h2>Step 1: Upload or Paste Your Resume</h2>
+  <h2>Step 1: Upload or Paste Your Resume</h2>
 
-    {% if error %}
-    <div class="alert alert-danger" role="alert">
-        {{ error }}
-    </div>
-    {% endif %}
+  {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
 
-    <form method="POST" enctype="multipart/form-data" action="/upload_resume" aria-label="Upload or paste your resume form">
-        <!-- Bootstrap Tabs for Paste vs Upload -->
-        <ul class="nav nav-tabs mb-3" id="resumeTab" role="tablist">
-            <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="paste-tab" data-bs-toggle="tab" data-bs-target="#paste" type="button" role="tab">Paste Resume</button>
-            </li>
-            <li class="nav-item" role="presentation">
-            <button class="nav-link" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload" type="button" role="tab">Upload File</button>
-            </li>
-        </ul>
-        
-        <div class="tab-content" id="resumeTabContent">
-            <div class="tab-pane fade show active" id="paste" role="tabpanel">
-            <div class="mb-3">
-                <label for="resume" class="form-label">Paste Resume Text</label>
-                <textarea class="form-control" name="resume" id="resume" rows="10" aria-describedby="resumeTextHelp">{{ resume or '' }}</textarea>
-                <div id="resumeTextHelp" class="form-text">Paste the content of your resume if you’re not uploading a file.</div>
-            </div>
-            </div>
-        
-            <div class="tab-pane fade" id="upload" role="tabpanel">
-            <div class="mb-3">
-                <label for="resume_file" class="form-label">Upload Resume File (.txt, .pdf, .docx)</label>
-                <input class="form-control" type="file" name="resume_file" id="resume_file" accept=".txt,.pdf,.docx" aria-describedby="resumeFileHelp">
-                <div id="resumeFileHelp" class="form-text">Choose a file if you prefer to upload your resume.</div>
-            </div>
-            </div>
+  <form method="POST" enctype="multipart/form-data" action="{{ url_for('upload_resume') }}" aria-label="Upload or paste resume form">
+    <!-- Bootstrap Tabs -->
+    <ul class="nav nav-tabs" id="resumeTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="paste-tab" data-bs-toggle="tab" data-bs-target="#paste" type="button" role="tab" aria-controls="paste" aria-selected="true">Paste Resume</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload" type="button" role="tab" aria-controls="upload" aria-selected="false">Upload File</button>
+      </li>
+    </ul>
+
+    <div class="tab-content mt-3" id="resumeTabContent">
+      <!-- Paste Resume Tab -->
+      <div class="tab-pane fade show active" id="paste" role="tabpanel" aria-labelledby="paste-tab">
+        <div class="mb-3">
+          <label for="resume">Paste Resume Text</label>
+          <textarea class="form-control" name="resume" id="resume" rows="10">{{ resume or '' }}</textarea>
         </div>
-  
+      </div>
 
-        {% include "partials/_loading.html" %}
+      <!-- Upload Resume Tab -->
+      <div class="tab-pane fade" id="upload" role="tabpanel" aria-labelledby="upload-tab">
+        <div class="mb-3">
+          <label for="resume_file">Upload Resume File (.txt, .pdf, .docx)</label>
+          <input class="form-control" type="file" name="resume_file" id="resume_file" accept=".txt,.pdf,.docx">
+        </div>
+      </div>
+    </div>
 
-        <button type="submit" id="generate" class="btn btn-primary" title="Continue to next step" aria-label="Continue to Job Description" tabindex="3">Next</button>
-    </form>
+    {% include "partials/_loading.html" %}
+    <button type="submit" id="generate" class="btn btn-primary mt-3">Next</button>
+  </form>
 </div>
-{% endblock %}
 
+{% endblock %}
