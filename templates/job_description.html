@@ -15,17 +15,34 @@
 <h2>Paste the Job Description</h2>
 
 <form method="POST">
-    <div class="mb-3">
-        <label for="job_url"class="form-label">Paste Job Description URL</label>
+  <!-- Tabs -->
+  <ul class="nav nav-tabs mb-3" id="jobTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="url-tab" data-bs-toggle="tab" data-bs-target="#url" type="button" role="tab">Paste Job URL</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc" type="button" role="tab">Paste Job Description</button>
+    </li>
+  </ul>
+
+  <div class="tab-content" id="jobTabContent">
+    <!-- URL Tab -->
+    <div class="tab-pane fade show active" id="url" role="tabpanel">
+      <div class="mb-3">
+        <label for="job_url" class="form-label">Paste Job Description URL</label>
         <input type="url" name="job_url" id="job_url" class="form-control" value="{{ job_url or '' }}">
+      </div>
     </div>
 
-    <p class="text-center my-2">— or —</p>
-
-    <div class="mb-3">
-        <label for="job">Paste Job Description</label>
+    <!-- Description Tab -->
+    <div class="tab-pane fade" id="desc" role="tabpanel">
+      <div class="mb-3">
+        <label for="job" class="form-label">Paste Job Description</label>
         <textarea class="form-control" id="job" name="job" rows="10">{{ job or '' }}</textarea>
+      </div>
     </div>
+  </div>
+
 
     {% include "partials/_loading.html" %}
     <button type="submit" class="btn btn-success">Generate Suggestions</button>
