@@ -12,20 +12,34 @@
     {% endif %}
 
     <form method="POST" enctype="multipart/form-data" action="/upload_resume" aria-label="Upload or paste your resume form">
-        <!-- Paste Resume -->
-        <div class="mb-3">
-            <label for="resume_file" class="form-label">Upload Resume File (.txt, .pdf, .docx)</label>
-            <input class="form-control" type="file" name="resume_file" id="resume_file" accept=".txt,.pdf,.docx" aria-required="false" aria-describedby="resumeFileHelp" tabindex="1">
-            <div id="resumeFileHelp" class="form-text">Choose a file if you prefer to upload your resume.</div>
+        <!-- Bootstrap Tabs for Paste vs Upload -->
+        <ul class="nav nav-tabs mb-3" id="resumeTab" role="tablist">
+            <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="paste-tab" data-bs-toggle="tab" data-bs-target="#paste" type="button" role="tab">Paste Resume</button>
+            </li>
+            <li class="nav-item" role="presentation">
+            <button class="nav-link" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload" type="button" role="tab">Upload File</button>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="resumeTabContent">
+            <div class="tab-pane fade show active" id="paste" role="tabpanel">
+            <div class="mb-3">
+                <label for="resume" class="form-label">Paste Resume Text</label>
+                <textarea class="form-control" name="resume" id="resume" rows="10" aria-describedby="resumeTextHelp">{{ resume or '' }}</textarea>
+                <div id="resumeTextHelp" class="form-text">Paste the content of your resume if you’re not uploading a file.</div>
+            </div>
+            </div>
+        
+            <div class="tab-pane fade" id="upload" role="tabpanel">
+            <div class="mb-3">
+                <label for="resume_file" class="form-label">Upload Resume File (.txt, .pdf, .docx)</label>
+                <input class="form-control" type="file" name="resume_file" id="resume_file" accept=".txt,.pdf,.docx" aria-describedby="resumeFileHelp">
+                <div id="resumeFileHelp" class="form-text">Choose a file if you prefer to upload your resume.</div>
+            </div>
+            </div>
         </div>
-
-        <p class="text-center my-2">— or —</p>
-
-        <div class="mb-3">
-            <label for="resume" class="form-label">Paste Resume Text</label>
-            <textarea class="form-control" name="resume" id="resume" rows="10" aria-describedby="resumeTextHelp" tabindex="2">{{ resume or '' }}</textarea>
-            <div id="resumeTextHelp" class="form-text">Paste the content of your resume if you’re not uploading a file.</div>
-        </div>
+  
 
         {% include "partials/_loading.html" %}
 
