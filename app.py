@@ -28,6 +28,20 @@ from utils import extract_text_from_file, generate_docx_file, create_zip
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
+from flask_mail import Mail, Message
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME")
+app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")
+
+mail = Mail(app)
+
 
 @app.route("/")
 def home():
@@ -153,6 +167,20 @@ def feedback():
         print("Feedback received:", feedback)
         if email:
             print("Optional email:", email)
+
+        # Send the email
+        try:
+            msg = Message(
+                subject="New Feedback Received",
+                sender=app.config["MAIL_USERNAME"],
+                recipients=[app.config["MAIL_USERNAME"]],  # Sends to yourself
+                body=f"Feedback: {feedback}\n\nEmail: {email or 'Not provided'}"
+            )
+            mail.send(msg)
+            print("Feedback email sent.")
+        except Exception as e:
+            print(f"Failed to send feedback email: {e}")
+
         return render_template("feedback.html", success=True)
 
     return render_template("feedback.html")
