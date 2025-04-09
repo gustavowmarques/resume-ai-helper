@@ -154,21 +154,32 @@ def ai_suggestions():
 
 @app.route("/cover_letter", methods=["POST"])
 def cover_letter():
-    name = request.form.get("name", "")
-    job_title = request.form.get("job_title", "")
-    resume = session.get("resume", "")
-    job = session.get("job", "")
+    name = request.form.get("name", "").strip()
+    job_title = request.form.get("job_title", "").strip()
     tone = request.form.get("tone", "Professional")
     language = request.form.get("language", "English")
 
-    if not resume or not job or not name or not job_title:
-        return render_template("cover_letter.html", error="Missing required inputs.", name=name, job_title=job_title)
+    resume = session.get("resume", "")
+    job = session.get("job", "")
+    contact_info = "Hiring Manager"
 
-    contact_info = extract_contact_info(job)
+    print("📩 Cover letter form submission:")
+    print(f"Name: {name}")
+    print(f"Job Title: {job_title}")
+    print(f"Tone: {tone}")
+    print(f"Language: {language}")
+    print(f"Resume length: {len(resume)}")
+    print(f"Job length: {len(job)}")
+
+    if not name or not job_title:
+        return render_template("cover_letter.html", letter=None, error="Please fill in your name and job title.")
+
     letter = generate_cover_letter(name, job_title, resume, job, tone, language, contact_info)
     session["cover_letter"] = letter
 
-    return render_template("cover_letter.html", cover_letter=letter, name=name, job_title=job_title)
+    print("✅ Generated cover letter:", letter[:150])
+    return render_template("cover_letter.html", letter=letter)
+
 
 @app.route("/download_docx")
 def download_docx():
