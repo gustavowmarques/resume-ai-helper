@@ -1,9 +1,10 @@
 import os
 import io
 import re
+import requests
 from docx import Document
-import PyPDF2
 import pdfplumber
+from bs4 import BeautifulSoup
 from werkzeug.utils import secure_filename
 
 def safe_filename(file):
@@ -56,8 +57,6 @@ def create_zip(files: dict, zip_name="output.zip"):
     return zip_buffer
 
 def extract_job_description_from_url(job_url):
-    import requests
-    from bs4 import BeautifulSoup
 
     try:
         response = requests.get(job_url, timeout=5)
@@ -67,7 +66,6 @@ def extract_job_description_from_url(job_url):
         # Extract both paragraphs and list items
         paragraphs = soup.find_all(["p", "li"])
         job_description = "\n".join(p.get_text() for p in paragraphs).strip()
-
-        return job_description or None
-    except Exception as e:
-        return f"Error: {str(e)}"
+        return job_description if job_description else None
+    except Exception:
+        return None
