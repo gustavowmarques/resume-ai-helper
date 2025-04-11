@@ -18,35 +18,44 @@ Author: Gustavo W. M. da Silva
 Date: March 2025
 """
 
-from flask import Flask, render_template, request, session, redirect, url_for, send_file
-
-import io
+from flask import Flask, render_template, request, redirect, url_for, session, send_file
+from flask_session import Session
+from flask_mail import Mail, Message
 
 from ai_logic import generate_ai_suggestions, generate_cover_letter
-from utils import extract_text_from_file, generate_docx_file, create_zip, extract_job_description_from_url, extract_contact_info
-from flask_session import Session
+from utils import (
+    safe_filename,
+    extract_text_from_file,
+    generate_docx_file,
+    create_zip,
+    extract_job_description_from_url,
+    extract_contact_info,
+)
 
-app = Flask(__name__)
-app.secret_key = "supersecretkey"
-
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
-
-from flask_mail import Mail, Message
-import os
 from dotenv import load_dotenv
+import os
+import io
 
-import requests
-from bs4 import BeautifulSoup
-
+# Load environment variables
 load_dotenv()
 
+app = Flask(__name__)
+
+# Secret key for session encryption
+app.secret_key = "supersecretkey"
+
+# Server-side session config
+app.config["SESSION_TYPE"] = "filesystem"
+app.config["SESSION_FILE_DIR"] = "./.flask_session/"
+app.config["SESSION_PERMANENT"] = False
+Session(app)
+
+# Mail config
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME")
 app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")
-
 mail = Mail(app)
 
 
@@ -69,7 +78,7 @@ def upload_resume():
             try:
                 resume_text = extract_text_from_file(uploaded_file)
             except Exception as e:
-                print(f"❌ Error reading file: {e}")
+                print(f"Error reading file: {e}")
                 return render_template("upload_resume.html", error="There was an issue with the uploaded file.")
 
         # ❌ If nothing is provided, show error
@@ -78,7 +87,7 @@ def upload_resume():
 
         # ✅ Save to session
         session["resume"] = resume_text
-        print("✅ Resume saved to session:", len(resume_text))
+        print("Resume saved to session:", len(resume_text))
         return redirect(url_for("job_description"))
 
     return render_template("upload_resume.html", resume=session.get("resume", ""))

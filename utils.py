@@ -1,4 +1,3 @@
-
 import os
 import io
 import re
@@ -7,8 +6,12 @@ import PyPDF2
 import pdfplumber
 from werkzeug.utils import secure_filename
 
+def safe_filename(file):
+    return secure_filename(file.filename)
+
+
 def extract_text_from_file(file):
-    filename = secure_filename(file.filename)
+    filename = safe_filename(file)
     ext = os.path.splitext(filename)[1].lower()
 
     if ext == ".txt":
