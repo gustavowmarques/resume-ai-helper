@@ -246,7 +246,7 @@ def feedback():
         except Exception as e:
             print(f"Failed to send feedback email: {e}")
 
-        return render_template("feedback.html", success=True)
+        return render_template("feedback_thankyou.html", success=True)
 
     return render_template("feedback.html")
 
