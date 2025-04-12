@@ -11,11 +11,9 @@
     <button class="btn btn-outline-primary" onclick="downloadPdf()">Download as .pdf</button>
     {% if letter %}
         <a href="/download_docx" class="btn btn-outline-dark">Download as .docx</a>
+        <a href="{{ url_for('download_all') }}" class="btn btn-outline-primary ms-2">Download All (.zip)</a>
     {% else %}
         <p class="text-danger mt-3">Generate a cover letter before downloading it.</p>
-    {% endif %}
-    {% if response and letter %}
-        <a href="/download_zip" class="btn btn-dark">Download All (.zip)</a>
     {% endif %}
 </div>
 

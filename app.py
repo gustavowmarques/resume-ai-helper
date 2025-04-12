@@ -1,3 +1,8 @@
+#app.py
+#The code in this file is responsible for:Route definitions, Request/response handling and Rendering templates
+
+
+
 """
 Resume AI Helper App
 --------------------
@@ -27,6 +32,7 @@ from utils import (
     safe_filename,
     extract_text_from_file,
     generate_docx_file,
+    generate_pdf_file,
     create_zip,
     extract_job_description_from_url,
     extract_contact_info,
@@ -71,7 +77,7 @@ def upload_resume():
         pasted_text = request.form.get("resume", "").strip()
         uploaded_file = request.files.get("resume_file")
 
-        # ✅ Use pasted resume if provided
+        # Use pasted resume if provided
         if pasted_text:
             resume_text = pasted_text
         elif uploaded_file and uploaded_file.filename != "":
@@ -81,11 +87,11 @@ def upload_resume():
                 print(f"Error reading file: {e}")
                 return render_template("upload_resume.html", error="There was an issue with the uploaded file.")
 
-        # ❌ If nothing is provided, show error
+        # If nothing is provided, show error
         if not resume_text:
             return render_template("upload_resume.html", error="Please paste your resume or upload a valid file.")
 
-        # ✅ Save to session
+        # Save to session
         session["resume"] = resume_text
         print("Resume saved to session:", len(resume_text))
         return redirect(url_for("job_description"))
@@ -106,7 +112,7 @@ def job_description():
         print(f"Job URL: {job_url}")
         print(f"Job Desc: {job_desc[:100]}")
 
-        # 🔍 If job URL is present and job description is blank, try scraping
+        # If job URL is present and job description is blank, try scraping
         if job_url and not job_desc:
             job_desc = extract_job_description_from_url(job_url)
 
@@ -120,7 +126,7 @@ def job_description():
                 )
 
 
-                # ❗ If neither field has data
+                # If neither field has data
                 if not job_desc:
                     return render_template(
                         "job_description.html",
@@ -130,7 +136,7 @@ def job_description():
                         job=""
                     )
 
-        # ✅ All good, save and continue
+        # All good, save and continue
         session["job"] = job_desc
         session["job_url"] = job_url
 
@@ -150,7 +156,7 @@ def ai_suggestions():
     resume = session.get("resume", "")
     job = session.get("job", "")
 
-    print("🔍 DEBUG /ai_suggestions")
+    print("DEBUG /ai_suggestions")
     print("Resume Length:", len(resume))
     print("Job Length:", len(job))
 
@@ -158,6 +164,7 @@ def ai_suggestions():
         return render_template("ai_suggestions.html", response="Missing resume or job description.", resume="", job="")
 
     ai_response = generate_ai_suggestions(resume, job)
+    session["ai_suggestions"] = ai_response
     return render_template("ai_suggestions.html", response=ai_response, resume=resume, job=job)
 
 
@@ -172,7 +179,7 @@ def cover_letter():
     job = session.get("job", "")
     contact_info = "Hiring Manager"
 
-    print("📩 Cover letter form submission:")
+    print("Cover letter form submission:")
     print(f"Name: {name}")
     print(f"Job Title: {job_title}")
     print(f"Tone: {tone}")
@@ -186,7 +193,7 @@ def cover_letter():
     letter = generate_cover_letter(name, job_title, resume, job, tone, language, contact_info)
     session["cover_letter"] = letter
 
-    print("✅ Generated cover letter:", letter[:150])
+    print("Generated cover letter:", letter[:150])
     return render_template("cover_letter.html", letter=letter)
 
 
@@ -205,25 +212,34 @@ def download_docx():
 
 @app.route("/download_all")
 def download_all():
-    resume = session.get("resume", "")
-    job = session.get("job", "")
-    cover_letter = session.get("cover_letter", "")
+    letter = session.get("cover_letter", "")
+    suggestions = session.get("ai_suggestions", "")
 
-    if not resume or not job or not cover_letter:
-        return "Missing data for zip."
+    if not letter or not suggestions:
+        return "Missing content to zip."
+
+    # Generate content in different formats
+    letter_docx = generate_docx_file(letter).getvalue()
+    suggestions_docx = generate_docx_file(suggestions).getvalue()
+    letter_pdf = generate_pdf_file(letter).getvalue()
+
 
     files = {
-        "resume.txt": io.BytesIO(resume.encode("utf-8")),
-        "job_description.txt": io.BytesIO(job.encode("utf-8")),
-        "cover_letter.txt": io.BytesIO(cover_letter.encode("utf-8")),
+        "cover_letter.txt": letter,
+        "cover_letter.docx": letter_docx,
+        "cover_letter.pdf": letter_pdf,
+        "ai_suggestions.docx": suggestions_docx
     }
 
+    zip_buffer = create_zip(files)
+
     return send_file(
-        create_zip(files),
+        zip_buffer,
         as_attachment=True,
-        download_name="resume_ai_package.zip",
+        download_name="resume_ai_output.zip",
         mimetype="application/zip"
     )
+
 
 
 

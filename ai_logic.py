@@ -1,3 +1,9 @@
+#ai_logic.py
+#It handles all OpenAI-related logic, including resume suggestions and cover letter generation.
+#This code was initially within the app.py file. As recommended by Hassan during the Saturday class on the 5th March, I created this and the
+#'utils.py' files to refactor my code into separate modules for better organization and maintainability
+#The functions from this file are being imported into 'app.py'
+
 import os
 import openai
 from datetime import date
