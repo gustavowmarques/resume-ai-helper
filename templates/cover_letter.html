@@ -1,3 +1,6 @@
+<!-- cover_letter.html: Generates AI-written cover letter -->
+
+
 {% extends "base.html" %}
 {% block title %}Cover Letter for {{ job_title }}{% endblock %}
 
@@ -5,51 +8,20 @@
 <h2>Your AI-Generated Cover Letter</h2>
 <pre id="letter-content" style="white-space: pre-wrap;">{{ letter }}</pre>
 
+<!-- Buttons for downloading the cover letter -->
 <div class="mt-4 d-flex flex-wrap gap-2">
     <a href="/" class="btn btn-secondary">Back to Home</a>
     <button class="btn btn-success" onclick="downloadTxt()">Download as .txt</button>
     <button class="btn btn-outline-primary" onclick="downloadPdf()">Download as .pdf</button>
+
+    <!-- the button appears as long as a cover letter was generated, matching the logic  -->
     {% if letter %}
         <a href="/download_docx" class="btn btn-outline-dark">Download as .docx</a>
         <a href="{{ url_for('download_all') }}" class="btn btn-outline-primary ms-2">Download All (.zip)</a>
+    
+    <!-- ZIP download button conditional if content is missing -->
     {% else %}
         <p class="text-danger mt-3">Generate a cover letter before downloading it.</p>
     {% endif %}
 </div>
-
-<script>
-function downloadTxt() {
-    const text = document.getElementById("letter-content").innerText;
-    const blob = new Blob([text], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "cover_letter.txt";
-    a.click();
-    URL.revokeObjectURL(url);
-}
-
-function downloadPdf() {
-    const text = document.getElementById("letter-content").innerText;
-    const doc = new jsPDF(); 
-    doc.setFont("Helvetica");
-    doc.setFontSize(12);
-    const lines = doc.splitTextToSize(text, 180);
-    doc.text(lines, 15, 20);
-    doc.save("cover_letter.pdf");
-}
-
-function downloadDocx() {
-    const text = document.getElementById("letter-content").innerText;
-    const blob = new Blob([text], {
-        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "cover_letter.docx";
-    a.click();
-    URL.revokeObjectURL(url);
-}
-</script>
 {% endblock %}

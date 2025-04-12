@@ -1,13 +1,24 @@
+/* style.css
+I used Bootstarp for most of the layout. However, I created this .css file for some additonal layout and formating
+The app contains a 'Dark Mode' toggle, the colours used for the dark mode are defined on this page.
+The format of the 'Resume Preview' box that is shown on the top of the job_description.hetml page is also defined here*/
+
+/* Body and headers colour: */
+
 body {
     background-color: #f8f9fa;
 }
 h1, h2 {
     color: #343a40;
 }
+
+/* Loading animation position: */
 #loading {
     text-align: center;
     padding: 1rem;
   }
+
+  /* Dark mode colours used: */
   body.dark-mode {
     background-color: #121212 !important;
     color: #f8f9fa !important;
@@ -48,6 +59,7 @@ h1, h2 {
     color: #f8f9fa;
   }
   
+  /* Resume Preview Formatting: */
   .resume-preview {
     max-height: 200px;
     overflow-y: auto;

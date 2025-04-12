@@ -1,3 +1,10 @@
+<!-- base.html (or layout file) 
+ this is the layout used for every html page -->
+
+<!-- <!DOCTYPE html> present: Prevents Quirks Mode
+Language + viewport meta: Mobile responsive
+Bootstrap CSS + JS included
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +15,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
-
+<!-- Flash messages: integration with Bootstrap alerts -->
 <body class="{% if dark_mode %}bg-dark text-light{% endif %}">
   {% include "partials/_navbar.html" %}
   {% with messages = get_flashed_messages(with_categories=true) %}

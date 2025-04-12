@@ -1,8 +1,3 @@
-#app.py
-#The code in this file is responsible for:Route definitions, Request/response handling and Rendering templates
-
-
-
 """
 Resume AI Helper App
 --------------------
@@ -22,6 +17,8 @@ Key Features:
 Author: Gustavo W. M. da Silva
 Date: March 2025
 """
+#app.py
+#The code in this file is responsible for:Route definitions, Request/response handling and Rendering templates
 
 from flask import Flask, render_template, request, redirect, url_for, session, send_file
 from flask_session import Session

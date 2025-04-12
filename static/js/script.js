@@ -1,3 +1,12 @@
+// script.js
+//Used for:
+//* Input validation and dark mode toggle are handled
+//* Resume and job description validations 
+
+
+//This is part of a client-side script designed to enhance the user experience on a page where a user can either:
+//upload a resume file OR
+//paste their resume into a textarea.
 document.addEventListener("DOMContentLoaded", () => {
   const textarea = document.getElementById("resume");
   const fileInput = document.getElementById("resume_file");
@@ -78,6 +87,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // JavaScript to Handle Field Disabling
+  // Ensures no input field is accidentally sent blank when it was never used.
   const jobForm = document.querySelector("form[action='/job_description']");
   if (jobForm) {
     jobForm.addEventListener("submit", function (e) {
@@ -90,13 +101,15 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Optional: Re-enable fields if user navigates back
+    // Re-enable fields if user navigates back
     window.addEventListener("pageshow", () => {
       document.getElementById("job").disabled = false;
       document.getElementById("job_url").disabled = false;
     });
   }
 
+  // JavaScript to Handle Field Disabling
+  // Ensures no input field is accidentally sent blank when it was never used.
   const resumeForm = document.querySelector("form[action='/upload_resume']");
   if (resumeForm) {
     resumeForm.addEventListener("submit", function (e) {
@@ -118,3 +131,37 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 }); 
+
+function downloadTxt() {
+  const text = document.getElementById("letter-content").innerText;
+  const blob = new Blob([text], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "cover_letter.txt";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadPdf() {
+  const text = document.getElementById("letter-content").innerText;
+  const doc = new jsPDF(); 
+  doc.setFont("Helvetica");
+  doc.setFontSize(12);
+  const lines = doc.splitTextToSize(text, 180);
+  doc.text(lines, 15, 20);
+  doc.save("cover_letter.pdf");
+}
+
+function downloadDocx() {
+  const text = document.getElementById("letter-content").innerText;
+  const blob = new Blob([text], {
+      type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "cover_letter.docx";
+  a.click();
+  URL.revokeObjectURL(url);
+}
