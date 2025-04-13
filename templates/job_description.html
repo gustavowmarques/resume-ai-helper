@@ -1,4 +1,8 @@
-<!-- job_description.html -->
+<!--
+  This page lets the user enter a job description by either:
+  - Pasting a URL to extract the description automatically, or
+  - Pasting the job description text manually.
+-->
 
 {% extends "base.html" %}
 {% block title %}Job Description{% endblock %}
@@ -34,6 +38,7 @@
     </li>
   </ul>
 
+  <!-- Tabs content for job URL and manual job description input -->
   <div class="tab-content" id="jobTabContent">
     <!-- URL Tab -->
     <div class="tab-pane fade show active" id="url" role="tabpanel">
@@ -54,6 +59,8 @@
 
 
     {% include "partials/_loading.html" %}
+
+    <!-- Submit job description to generate AI suggestions -->
     <button type="submit" class="btn btn-success">Generate Suggestions</button>
 </form>
 

@@ -1,4 +1,7 @@
-<!-- upload_resume.html -->
+<!--
+  This page allows the user to either paste or upload their resume.
+  The chosen method is then submitted for processing via a POST request.
+-->
 
 {% extends "base.html" %}
 {% block title %}Upload Resume{% endblock %}
@@ -44,6 +47,8 @@
     </div>
 
     {% include "partials/_loading.html" %}
+
+    <!-- Submit the selected resume method (pasted text or uploaded file) -->
     <button type="submit" id="generate" class="btn btn-primary mt-3">Next</button>
   </form>
 </div>

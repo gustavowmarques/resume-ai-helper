@@ -1,10 +1,7 @@
 <!-- base.html (or layout file) 
  this is the layout used for every html page -->
 
-<!-- <!DOCTYPE html> present: Prevents Quirks Mode
-Language + viewport meta: Mobile responsive
-Bootstrap CSS + JS included
--->
+<!-- Base HTML template used by all pages. Contains shared layout, styles, and navigation. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,7 +14,10 @@ Bootstrap CSS + JS included
 
 <!-- Flash messages: integration with Bootstrap alerts -->
 <body class="{% if dark_mode %}bg-dark text-light{% endif %}">
+
+  <!-- Navbar with site links -->
   {% include "partials/_navbar.html" %}
+
   {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
   <div class="container mt-3">
@@ -31,9 +31,16 @@ Bootstrap CSS + JS included
   {% endwith %}
 
   <main class="container mt-4">
+
+    <!-- Main content will be injected here by child templates -->
     {% block content %}{% endblock %}
+
   </main>
+
+  <!-- Page footer -->
   {% include "partials/_footer.html" %}
+
+<!-- External JavaScript libraries and main app script -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>

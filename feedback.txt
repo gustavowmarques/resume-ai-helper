@@ -1,3 +1,6 @@
+feedback.txt
+Feedback entered in the feedback form are saved here
+
 ----- Feedback Entry -----
 Email: gustavowmarques@gmail.com
 Feedback: great

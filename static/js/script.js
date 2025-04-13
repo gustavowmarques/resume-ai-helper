@@ -1,7 +1,7 @@
-// script.js
-//Used for:
-//* Input validation and dark mode toggle are handled
-//* Resume and job description validations 
+// Global JavaScript loaded on all pages.
+// Uses pathname checks and form selectors to scope functionality.
+// Handles validation, dark mode, download features, and field toggling.
+
 
 
 //This is part of a client-side script designed to enhance the user experience on a page where a user can either:

@@ -1,22 +1,35 @@
-<!-- cover_letter.html: Generates AI-written cover letter -->
-
+<!--
+  Displays the AI-generated cover letter and allows the user
+  to download it in various formats or go back to the home page.
+-->
 
 {% extends "base.html" %}
 {% block title %}Cover Letter for {{ job_title }}{% endblock %}
 
 {% block content %}
 <h2>Your AI-Generated Cover Letter</h2>
+
+<!-- Display the generated cover letter inside a bordered container -->
 <pre id="letter-content" style="white-space: pre-wrap;">{{ letter }}</pre>
 
 <!-- Buttons for downloading the cover letter -->
 <div class="mt-4 d-flex flex-wrap gap-2">
+
+    <!-- Return to home page -->
     <a href="/" class="btn btn-secondary">Back to Home</a>
+
+    <!-- Button to download cover letter as .txt -->
     <button class="btn btn-success" onclick="downloadTxt()">Download as .txt</button>
+
+    <!-- Button to download cover letter as .pdf -->
     <button class="btn btn-outline-primary" onclick="downloadPdf()">Download as .pdf</button>
 
     <!-- the button appears as long as a cover letter was generated, matching the logic  -->
     {% if letter %}
+        <!-- Button to download cover letter as .docx (server-side) -->
         <a href="/download_docx" class="btn btn-outline-dark">Download as .docx</a>
+
+        <!-- Button to download all documents in a ZIP file -->
         <a href="{{ url_for('download_all') }}" class="btn btn-outline-primary ms-2">Download All (.zip)</a>
     
     <!-- ZIP download button conditional if content is missing -->

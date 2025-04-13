@@ -1,9 +1,10 @@
-#utils.py
-#AI-related functionality shared helper functions (file parsing, formatting, etc.)
-#This file includes helper functions for extracting text from resumes, formatting names, and checking file types.
-#This code was initially within the app.py file. As recommended by Hassan during the Saturday class on the 5th March, I created this and the
-#'ai_logic.py' files to refactor my code into separate modules for better organization and maintainability
-#The functions from this file are being imported into 'app.py'
+"""
+utils.py
+
+Contains utility/helper functions for file processing, text extraction,
+filename sanitization, contact info parsing, and generating .docx/.pdf/.zip files.
+"""
+
 
 import os
 import io
@@ -17,13 +18,23 @@ from werkzeug.utils import secure_filename
 from reportlab.lib.pagesizes import LETTER
 from reportlab.pdfgen import canvas
 
+
 def safe_filename(file):
     return secure_filename(file.filename)
 
 
 def extract_text_from_file(file):
+    """
+    Extracts raw text content from a file (.txt, .pdf, or .docx).
+
+    Args:
+        file (FileStorage): Uploaded file object from the form.
+
+    Returns:
+        str: Extracted text content.
+    """
     filename = safe_filename(file)
-    ext = os.path.splitext(filename)[1].lower()
+    ext = os.path.splitext(filename)[1].lower()  # Get file extension to determine parsing logic
 
     if ext == ".txt":
         return file.read().decode("utf-8")
@@ -58,12 +69,21 @@ def generate_docx_file(text):
     return file_stream
 
 def generate_pdf_file(text):
+    """
+    Generates a PDF file stream from the given plain text using reportlab.
+
+    Args:
+        text (str): Text content to convert into PDF.
+
+    Returns:
+        BytesIO: File-like object representing the PDF file.
+    """
     buffer = io.BytesIO()
     c = canvas.Canvas(buffer, pagesize=LETTER)
     width, height = LETTER
 
     # Split and draw each line
-    y = height - 50
+    y = height - 50 # Starting Y position for text drawing on the PDF page
     for line in text.splitlines():
         c.drawString(50, y, line)
         y -= 15
@@ -77,8 +97,13 @@ def generate_pdf_file(text):
 
 def create_zip(files: dict, zip_name="output.zip"):
     """
-    Accepts a dictionary of filenames and file content (as strings).
-    Returns a BytesIO zip file.
+    Creates a ZIP archive in memory from a dictionary of file names and string content.
+
+    Args:
+        files (dict): Dictionary where keys are filenames and values are text content.
+
+    Returns:
+        BytesIO: A file-like ZIP stream ready for download.
     """
 
     zip_buffer = io.BytesIO()

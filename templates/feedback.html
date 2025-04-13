@@ -1,6 +1,4 @@
-<!-- feedback.html
- A simple feedback form (textarea + email optional) 
- Server-side form handling with POST -->
+<!-- Feedback form for users to submit optional comments or suggestions -->
 
 {% extends "base.html" %}
 {% block title %}Feedback{% endblock %}
@@ -9,6 +7,7 @@
 <h2>Feedback</h2>
 <p>We'd love to hear what you think about Resume AI Helper.</p>
 
+<!-- Feedback form fields -->
 <form method="POST">
   <div class="mb-3">
     <label for="feedback">Your Feedback</label>
@@ -16,10 +15,14 @@
   </div>
 
   <div class="mb-3">
+
+    <!-- Optional email input -->
     <label for="email">Your Email (optional)</label>
     <input type="email" name="email" id="email" class="form-control">
   </div>
   {% include "partials/_loading.html" %}
+
+  <!-- Submit feedback -->
   <button type="submit" class="btn btn-success">Submit Feedback</button>
 </form>
 {% endblock %}

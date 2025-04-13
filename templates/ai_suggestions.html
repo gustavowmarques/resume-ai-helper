@@ -1,11 +1,18 @@
-<!-- ai_suggestions.html: Shows AI-generated suggestions -->
+<!--
+  Shows AI-generated suggestions for improving the resume
+  based on the provided job description.
+-->
 
 {% extends "base.html" %}
 {% block title %}AI Suggestions{% endblock %}
 
 {% block content %}
+
+<!-- Display input preview: resume and job description -->
 <h2>AI Suggestions</h2>
 <div class="alert alert-light" style="white-space: pre-wrap;">
+
+    <!-- AI-generated suggestions displayed below -->
     {{ response | safe }}
 </div>
 
